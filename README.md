@@ -14,7 +14,7 @@ Generate hundreds of SEO-optimized pages in minutes. Works for any directory-sty
    - [Anthropic](https://console.anthropic.com) (for the API key)
 4. **Clone this repo:**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/pseo-workshop.git
+   git clone https://github.com/flaviob/pseo-workshop.git
    cd pseo-workshop
    ```
 5. **Install dependencies:**
