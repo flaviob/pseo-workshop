@@ -30,10 +30,39 @@ function markdownToHtml(markdown) {
     '<a href="$2" class="text-red-500 hover:text-red-700 underline">$1</a>'
   );
 
-  // Tables
-  html = html.replace(/^\|(.+)\|$/gm, (match) => {
-    const cells = match.split("|").filter((c) => c.trim() !== "");
-    return cells.map((c) => `<td class="border border-gray-200 px-4 py-2">${c.trim()}</td>`).join("");
+  // Tables — find consecutive lines starting with |
+  html = html.replace(/(^\|.+\|$\n?)+/gm, (tableBlock) => {
+    const rows = tableBlock.trim().split("\n").filter((r) => r.trim());
+    if (rows.length < 2) return tableBlock;
+
+    // Check if second row is a separator (|---|---|)
+    const isSeparator = (row) => /^\|[\s\-:]+(\|[\s\-:]+)+\|?$/.test(row);
+    const hasSeparator = isSeparator(rows[1]);
+
+    const parseRow = (row, tag) => {
+      const cells = row.split("|").filter((c) => c.trim() !== "");
+      const cls = tag === "th"
+        ? 'class="bg-gray-100 border border-gray-200 px-4 py-2 text-left font-semibold"'
+        : 'class="border border-gray-200 px-4 py-2"';
+      return "<tr>" + cells.map((c) => `<${tag} ${cls}>${c.trim()}</${tag}>`).join("") + "</tr>";
+    };
+
+    let tableHtml = '<table class="w-full border-collapse mb-6">';
+    if (hasSeparator) {
+      tableHtml += "<thead>" + parseRow(rows[0], "th") + "</thead><tbody>";
+      for (let i = 2; i < rows.length; i++) {
+        if (!isSeparator(rows[i])) tableHtml += parseRow(rows[i], "td");
+      }
+      tableHtml += "</tbody>";
+    } else {
+      tableHtml += "<tbody>";
+      for (const row of rows) {
+        if (!isSeparator(row)) tableHtml += parseRow(row, "td");
+      }
+      tableHtml += "</tbody>";
+    }
+    tableHtml += "</table>";
+    return tableHtml;
   });
 
   // Horizontal rules
