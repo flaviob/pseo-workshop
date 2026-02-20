@@ -1,4 +1,4 @@
-const config = require("../../config");
+const config = require("../config");
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 

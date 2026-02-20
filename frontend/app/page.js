@@ -1,6 +1,6 @@
 import { getAllArticles, getArticles } from "../lib/strapi";
 
-const config = require("../../config");
+const config = require("../config");
 
 export default async function HomePage() {
   const articles = await getAllArticles({ limit: "50" });

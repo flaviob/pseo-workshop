@@ -1,6 +1,6 @@
 import { getAllArticles } from "../lib/strapi";
 
-const config = require("../../config");
+const config = require("../config");
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || `https://${config.domain}`;
 

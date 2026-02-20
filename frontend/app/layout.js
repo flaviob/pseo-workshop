@@ -1,6 +1,6 @@
 import "./globals.css";
 
-const config = require("../../config");
+const config = require("../config");
 
 export const metadata = {
   title: {
