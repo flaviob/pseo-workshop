@@ -1,5 +1,3 @@
-"use client";
-
 import { buildLinkMap, injectInternalLinks } from "../lib/internal-links";
 
 function markdownToHtml(markdown) {
