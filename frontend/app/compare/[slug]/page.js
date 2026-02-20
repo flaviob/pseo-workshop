@@ -15,8 +15,8 @@ export default async function ComparisonPage({ params }) {
   if (!article) {
     return (
       <div className="text-center py-16">
-        <h1 className="text-2xl font-bold mb-4">Article not found</h1>
-        <a href="/" className="text-red-500 hover:underline">
+        <h1 className="font-display text-2xl font-bold mb-4 text-ink-900">Article not found</h1>
+        <a href="/" className="text-accent-600 hover:underline">
           Go back home
         </a>
       </div>
@@ -26,8 +26,13 @@ export default async function ComparisonPage({ params }) {
   const allArticles = await getAllArticles();
   const schema = articleSchema(article);
 
+  // Extract the two items from title
+  const titleMatch = article.title.match(/^(.+?)\s+vs\.?\s+(.+?)(?::|$)/i);
+  const itemA = titleMatch ? titleMatch[1].trim() : null;
+  const itemB = titleMatch ? titleMatch[2].trim() : null;
+
   return (
-    <article>
+    <article className="max-w-3xl mx-auto">
       {schema && (
         <script
           type="application/ld+json"
@@ -35,26 +40,39 @@ export default async function ComparisonPage({ params }) {
         />
       )}
 
-      <header className="mb-8">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-xs font-medium px-2 py-1 bg-blue-50 text-blue-600 rounded">
-            Comparison
-          </span>
-          {article.category && (
-            <span className="text-xs text-gray-400">{article.category}</span>
-          )}
+      <header className="mb-10">
+        <div className="flex items-center gap-3 mb-4">
+          <a href="/" className="text-sm text-ink-400 hover:text-accent-600 transition-colors">Home</a>
+          <span className="text-ink-300">/</span>
+          <span className="text-sm font-medium text-accent-600">Comparison</span>
         </div>
-        <h1 className="text-3xl font-bold mb-3">{article.title}</h1>
+        {itemA && itemB && (
+          <div className="flex items-center gap-4 mb-5">
+            <span className="font-display text-lg font-bold text-ink-800 bg-brand-100 px-4 py-2 rounded-xl">
+              {itemA}
+            </span>
+            <span className="font-display text-sm font-bold text-accent-500">VS</span>
+            <span className="font-display text-lg font-bold text-ink-800 bg-brand-100 px-4 py-2 rounded-xl">
+              {itemB}
+            </span>
+          </div>
+        )}
+        <h1 className="font-display text-3xl md:text-4xl font-bold mb-4 text-ink-950 leading-tight">
+          {article.title}
+        </h1>
         {article.excerpt && (
-          <p className="text-lg text-gray-600">{article.excerpt}</p>
+          <p className="text-lg text-ink-500 leading-relaxed">{article.excerpt}</p>
         )}
       </header>
 
-      <ArticleContent
-        content={article.content}
-        currentSlug={article.slug}
-        allArticles={allArticles}
-      />
+      <div className="bg-white rounded-2xl border border-brand-200 p-6 md:p-10">
+        <ArticleContent
+          content={article.content}
+          currentSlug={article.slug}
+          allArticles={allArticles}
+          title={article.title}
+        />
+      </div>
 
       <RelatedPosts
         currentSlug={article.slug}

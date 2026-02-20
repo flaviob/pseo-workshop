@@ -1,4 +1,4 @@
-import { getArticleBySlug, getArticles, getAllArticles } from "../../lib/strapi";
+import { getArticleBySlug, getAllArticles } from "../../lib/strapi";
 import { generateMetadata as genMeta, articleSchema } from "../../lib/seo";
 import ArticleContent from "../../components/ArticleContent";
 import RelatedPosts from "../../components/RelatedPosts";
@@ -15,8 +15,8 @@ export default async function DirectoryItemPage({ params }) {
   if (!article) {
     return (
       <div className="text-center py-16">
-        <h1 className="text-2xl font-bold mb-4">Article not found</h1>
-        <a href="/" className="text-red-500 hover:underline">
+        <h1 className="font-display text-2xl font-bold mb-4 text-ink-900">Article not found</h1>
+        <a href="/" className="text-accent-600 hover:underline">
           Go back home
         </a>
       </div>
@@ -27,7 +27,7 @@ export default async function DirectoryItemPage({ params }) {
   const schema = articleSchema(article);
 
   return (
-    <article>
+    <article className="max-w-3xl mx-auto">
       {schema && (
         <script
           type="application/ld+json"
@@ -35,26 +35,28 @@ export default async function DirectoryItemPage({ params }) {
         />
       )}
 
-      <header className="mb-8">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-xs font-medium px-2 py-1 bg-red-50 text-red-600 rounded">
-            Review
-          </span>
-          {article.category && (
-            <span className="text-xs text-gray-400">{article.category}</span>
-          )}
+      <header className="mb-10">
+        <div className="flex items-center gap-3 mb-4">
+          <a href="/" className="text-sm text-ink-400 hover:text-accent-600 transition-colors">Home</a>
+          <span className="text-ink-300">/</span>
+          <span className="text-sm font-medium text-brand-600">Review</span>
         </div>
-        <h1 className="text-3xl font-bold mb-3">{article.title}</h1>
+        <h1 className="font-display text-3xl md:text-4xl font-bold mb-4 text-ink-950 leading-tight">
+          {article.title}
+        </h1>
         {article.excerpt && (
-          <p className="text-lg text-gray-600">{article.excerpt}</p>
+          <p className="text-lg text-ink-500 leading-relaxed">{article.excerpt}</p>
         )}
       </header>
 
-      <ArticleContent
-        content={article.content}
-        currentSlug={article.slug}
-        allArticles={allArticles}
-      />
+      <div className="bg-white rounded-2xl border border-brand-200 p-6 md:p-10">
+        <ArticleContent
+          content={article.content}
+          currentSlug={article.slug}
+          allArticles={allArticles}
+          title={article.title}
+        />
+      </div>
 
       <RelatedPosts
         currentSlug={article.slug}

@@ -5,14 +5,12 @@ export default async function RelatedPosts({
   contentType,
   category,
 }) {
-  // Fetch related articles: same category first, then same content type
   let related = [];
 
   if (category) {
     related = await getArticlesByCategory(category);
   }
 
-  // If not enough from category, fetch by content type
   if (related.length < 4 && contentType) {
     const byType = await getArticles(contentType, { limit: "10" });
     const existing = new Set(related.map((r) => r.id));
@@ -23,7 +21,6 @@ export default async function RelatedPosts({
     }
   }
 
-  // Remove current article and limit to 4
   related = related.filter((a) => a.slug !== currentSlug).slice(0, 4);
 
   if (related.length === 0) return null;
@@ -36,8 +33,8 @@ export default async function RelatedPosts({
   };
 
   return (
-    <section className="mt-12 pt-8 border-t border-gray-200">
-      <h2 className="text-xl font-bold mb-6">Related Articles</h2>
+    <section className="mt-14 pt-10 border-t border-brand-200">
+      <h2 className="font-display text-xl font-bold mb-6 text-ink-950">Related Articles</h2>
       <div className="grid md:grid-cols-2 gap-4">
         {related.map((article) => {
           const prefix = prefixes[article.contentType] || "";
@@ -45,10 +42,10 @@ export default async function RelatedPosts({
             <a
               key={article.id}
               href={`${prefix}/${article.slug}`}
-              className="block border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+              className="block bg-white border border-brand-200 rounded-xl p-5 hover:shadow-lg hover:border-accent-300 transition-all"
             >
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-medium px-2 py-0.5 bg-gray-100 text-gray-600 rounded">
+                <span className="text-xs font-semibold px-2.5 py-1 bg-brand-100 text-brand-700 rounded-full">
                   {article.contentType === "directory-item"
                     ? "Review"
                     : article.contentType === "listicle"
@@ -58,16 +55,16 @@ export default async function RelatedPosts({
                         : "Guide"}
                 </span>
                 {article.category && (
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-ink-300">
                     {article.category}
                   </span>
                 )}
               </div>
-              <h3 className="font-semibold text-gray-900 mb-1">
+              <h3 className="font-display font-semibold text-ink-900 mb-1 leading-snug">
                 {article.title}
               </h3>
               {article.excerpt && (
-                <p className="text-sm text-gray-600 line-clamp-2">
+                <p className="text-sm text-ink-400 line-clamp-2 leading-relaxed">
                   {article.excerpt}
                 </p>
               )}

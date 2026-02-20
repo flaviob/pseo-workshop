@@ -8,13 +8,13 @@ function markdownToHtml(markdown) {
   // Code blocks (must be before inline code)
   html = html.replace(
     /```(\w*)\n([\s\S]*?)```/g,
-    '<pre class="bg-gray-100 rounded-lg p-4 overflow-x-auto mb-4"><code>$2</code></pre>'
+    '<pre class="bg-brand-100 rounded-lg p-4 overflow-x-auto mb-4 text-sm"><code>$2</code></pre>'
   );
 
   // Headings
-  html = html.replace(/^### (.+)$/gm, '<h3 class="text-xl font-semibold mt-6 mb-3">$1</h3>');
-  html = html.replace(/^## (.+)$/gm, '<h2 class="text-2xl font-bold mt-8 mb-4">$1</h2>');
-  html = html.replace(/^# (.+)$/gm, '<h1 class="text-3xl font-bold mt-8 mb-4">$1</h1>');
+  html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  html = html.replace(/^# (.+)$/gm, '<h2>$1</h2>');
 
   // Bold and italic
   html = html.replace(/\*\*\*(.+?)\*\*\*/g, "<strong><em>$1</em></strong>");
@@ -22,12 +22,12 @@ function markdownToHtml(markdown) {
   html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
 
   // Inline code
-  html = html.replace(/`(.+?)`/g, '<code class="bg-gray-100 px-1 py-0.5 rounded text-sm">$1</code>');
+  html = html.replace(/`(.+?)`/g, '<code class="bg-brand-100 px-1.5 py-0.5 rounded text-sm text-ink-700">$1</code>');
 
   // Links
   html = html.replace(
     /\[([^\]]+)\]\(([^)]+)\)/g,
-    '<a href="$2" class="text-red-500 hover:text-red-700 underline">$1</a>'
+    '<a href="$2">$1</a>'
   );
 
   // Tables — find consecutive lines starting with |
@@ -35,19 +35,15 @@ function markdownToHtml(markdown) {
     const rows = tableBlock.trim().split("\n").filter((r) => r.trim());
     if (rows.length < 2) return tableBlock;
 
-    // Check if second row is a separator (|---|---|)
     const isSeparator = (row) => /^\|[\s\-:]+(\|[\s\-:]+)+\|?$/.test(row);
     const hasSeparator = isSeparator(rows[1]);
 
     const parseRow = (row, tag) => {
       const cells = row.split("|").filter((c) => c.trim() !== "");
-      const cls = tag === "th"
-        ? 'class="bg-gray-100 border border-gray-200 px-4 py-2 text-left font-semibold"'
-        : 'class="border border-gray-200 px-4 py-2"';
-      return "<tr>" + cells.map((c) => `<${tag} ${cls}>${c.trim()}</${tag}>`).join("") + "</tr>";
+      return "<tr>" + cells.map((c) => `<${tag}>${c.trim()}</${tag}>`).join("") + "</tr>";
     };
 
-    let tableHtml = '<table class="w-full border-collapse mb-6">';
+    let tableHtml = '<div class="overflow-x-auto mb-6 rounded-lg border border-brand-200"><table class="w-full border-collapse text-sm">';
     if (hasSeparator) {
       tableHtml += "<thead>" + parseRow(rows[0], "th") + "</thead><tbody>";
       for (let i = 2; i < rows.length; i++) {
@@ -61,23 +57,23 @@ function markdownToHtml(markdown) {
       }
       tableHtml += "</tbody>";
     }
-    tableHtml += "</table>";
+    tableHtml += "</table></div>";
     return tableHtml;
   });
 
   // Horizontal rules
-  html = html.replace(/^---+$/gm, '<hr class="my-8 border-gray-200" />');
+  html = html.replace(/^---+$/gm, '<hr class="my-10 border-brand-200" />');
 
   // Unordered lists
-  html = html.replace(/^[-*] (.+)$/gm, '<li class="mb-1">$1</li>');
+  html = html.replace(/^[-*] (.+)$/gm, '<li>$1</li>');
 
   // Ordered lists
-  html = html.replace(/^\d+\. (.+)$/gm, '<li class="mb-1">$1</li>');
+  html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
 
   // Blockquotes
   html = html.replace(
     /^> (.+)$/gm,
-    '<blockquote class="border-l-4 border-gray-300 pl-4 italic text-gray-600 my-2">$1</blockquote>'
+    '<blockquote>$1</blockquote>'
   );
 
   // Paragraphs (lines that aren't already wrapped in HTML tags)
@@ -87,20 +83,25 @@ function markdownToHtml(markdown) {
       block = block.trim();
       if (!block) return "";
       if (block.startsWith("<")) return block;
-      return `<p class="mb-4 leading-relaxed">${block.replace(/\n/g, "<br />")}</p>`;
+      return `<p>${block.replace(/\n/g, "<br />")}</p>`;
     })
     .join("\n");
 
   return html;
 }
 
-export default function ArticleContent({ content, currentSlug, allArticles }) {
-  // Build link map and inject internal links
+export default function ArticleContent({ content, currentSlug, allArticles, title }) {
   let processedContent = content;
 
+  // Strip the first H1 if it matches the article title (avoids duplicate)
+  if (title && processedContent) {
+    processedContent = processedContent.replace(/^#\s+.+\n+/, "");
+  }
+
+  // Build link map and inject internal links
   if (allArticles && allArticles.length > 0) {
     const linkMap = buildLinkMap(allArticles);
-    processedContent = injectInternalLinks(content, currentSlug, linkMap);
+    processedContent = injectInternalLinks(processedContent, currentSlug, linkMap);
   }
 
   const html = markdownToHtml(processedContent);
