@@ -1,0 +1,21 @@
+{
+  "name": "pseo-workshop",
+  "version": "1.0.0",
+  "description": "pSEO Workshop — Build a full programmatic SEO site with Claude Code + Strapi + Next.js",
+  "scripts": {
+    "generate": "node scripts/generate-content.js",
+    "import": "node scripts/push-to-strapi.js",
+    "manage": "node scripts/manage-strapi.js",
+    "setup-permissions": "node scripts/setup-strapi-permissions.js",
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "start": "cd frontend && npm start"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "dotenv": "^16.4.7"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
