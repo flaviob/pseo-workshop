@@ -3,20 +3,20 @@
 @tailwind utilities;
 
 body {
-  @apply bg-white text-gray-900 antialiased;
+  @apply bg-brand-50 text-ink-900 antialiased;
 }
 
 /* Markdown content styles */
 .prose h2 {
-  @apply text-2xl font-bold mt-8 mb-4;
+  @apply text-2xl font-display font-bold mt-8 mb-4 text-ink-950;
 }
 
 .prose h3 {
-  @apply text-xl font-semibold mt-6 mb-3;
+  @apply text-xl font-display font-semibold mt-6 mb-3 text-ink-900;
 }
 
 .prose p {
-  @apply mb-4 leading-relaxed;
+  @apply mb-4 leading-relaxed text-ink-700;
 }
 
 .prose ul, .prose ol {
@@ -32,33 +32,33 @@ body {
 }
 
 .prose li {
-  @apply mb-2;
+  @apply mb-2 text-ink-700;
 }
 
 .prose a {
-  @apply text-red-500 hover:text-red-700 underline;
+  @apply text-accent-600 hover:text-accent-800 underline decoration-accent-300 underline-offset-2;
 }
 
 .prose table {
-  @apply w-full border-collapse mb-6;
+  @apply w-full border-collapse mb-6 text-sm;
 }
 
 .prose th {
-  @apply bg-gray-100 border border-gray-200 px-4 py-2 text-left font-semibold;
+  @apply bg-brand-100 border border-brand-200 px-4 py-2.5 text-left font-semibold text-ink-800;
 }
 
 .prose td {
-  @apply border border-gray-200 px-4 py-2;
+  @apply border border-brand-200 px-4 py-2.5 text-ink-700;
 }
 
 .prose blockquote {
-  @apply border-l-4 border-gray-300 pl-4 italic text-gray-600 my-4;
+  @apply border-l-4 border-accent-300 pl-4 italic text-ink-600 my-4 bg-accent-50 py-3 pr-4 rounded-r-lg;
 }
 
 .prose strong {
-  @apply font-bold;
+  @apply font-bold text-ink-900;
 }
 
 .prose hr {
-  @apply my-8 border-gray-200;
+  @apply my-8 border-brand-200;
 }

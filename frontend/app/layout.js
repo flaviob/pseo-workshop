@@ -1,6 +1,18 @@
 import "./globals.css";
+import { Inter, DM_Sans } from "next/font/google";
 
 const config = require("../config");
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-dm-sans",
+  weight: ["400", "500", "600", "700"],
+});
 
 export const metadata = {
   title: {
@@ -15,21 +27,25 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        <header className="border-b border-gray-200">
+    <html
+      lang="en"
+      className={`${inter.variable} ${dmSans.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="font-sans">
+        <header className="bg-white border-b border-brand-200">
           <nav className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-            <a href="/" className="text-xl font-bold text-gray-900">
+            <a href="/" className="font-display text-xl font-bold text-ink-950">
               {config.siteName}
             </a>
-            <div className="flex gap-6 text-sm text-gray-600">
-              <a href="/" className="hover:text-gray-900">
+            <div className="flex gap-6 text-sm font-medium text-ink-500">
+              <a href="/" className="hover:text-accent-600 transition-colors">
                 Home
               </a>
-              <a href="/privacy" className="hover:text-gray-900">
+              <a href="/privacy" className="hover:text-accent-600 transition-colors">
                 Privacy
               </a>
-              <a href="/contact" className="hover:text-gray-900">
+              <a href="/contact" className="hover:text-accent-600 transition-colors">
                 Contact
               </a>
             </div>
@@ -38,23 +54,29 @@ export default function RootLayout({ children }) {
 
         <main className="max-w-5xl mx-auto px-4 py-8">{children}</main>
 
-        <footer className="border-t border-gray-200 mt-16">
-          <div className="max-w-5xl mx-auto px-4 py-8 text-center text-sm text-gray-500">
-            <p>
-              &copy; {new Date().getFullYear()} {config.siteName}. All rights
-              reserved.
+        <footer className="bg-ink-950 mt-16">
+          <div className="max-w-5xl mx-auto px-4 py-10 text-center">
+            <p className="font-display font-bold text-white text-lg mb-1">
+              {config.siteName}
             </p>
-            <div className="mt-2 flex gap-4 justify-center">
-              <a href="/privacy" className="hover:text-gray-700">
+            <p className="text-ink-400 text-sm mb-6">
+              {config.nicheDescription}
+            </p>
+            <div className="flex gap-6 justify-center text-sm text-ink-400">
+              <a href="/privacy" className="hover:text-white transition-colors">
                 Privacy Policy
               </a>
-              <a href="/contact" className="hover:text-gray-700">
+              <a href="/contact" className="hover:text-white transition-colors">
                 Contact
               </a>
-              <a href="/sitemap.xml" className="hover:text-gray-700">
+              <a href="/sitemap.xml" className="hover:text-white transition-colors">
                 Sitemap
               </a>
             </div>
+            <p className="mt-6 text-xs text-ink-600">
+              &copy; {new Date().getFullYear()} {config.siteName}. All rights
+              reserved.
+            </p>
           </div>
         </footer>
       </body>
