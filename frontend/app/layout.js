@@ -15,22 +15,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <head>
-        {config.analytics.gaId && (
-          <>
-            <script
-              async
-              src={`https://www.googletagmanager.com/gtag/js?id=${config.analytics.gaId}`}
-            />
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${config.analytics.gaId}')`,
-              }}
-            />
-          </>
-        )}
-      </head>
+    <html lang="en" suppressHydrationWarning>
       <body>
         <header className="border-b border-gray-200">
           <nav className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
