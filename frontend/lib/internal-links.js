@@ -6,6 +6,7 @@
  * - Never place links inside headings
  * - Always vary anchor text (never use the same phrase for every link)
  * - Track links per slug to avoid spam patterns
+ * - Spread links across the article, not clustered together
  */
 
 const MAX_LINKS_PER_ARTICLE = 4;
@@ -80,15 +81,36 @@ function generateAnchorVariations(title, category, type) {
   return [...new Set(variations)].slice(0, 4);
 }
 
+// Varied link sentence templates — {anchor} and {url} are placeholders
+const LINK_TEMPLATES = [
+  (anchor, url) => `For a deeper dive, see [${anchor}](${url}).`,
+  (anchor, url) => `You might also find [${anchor}](${url}) useful.`,
+  (anchor, url) => `We cover this in more detail in [${anchor}](${url}).`,
+  (anchor, url) => `Related reading: [${anchor}](${url}).`,
+  (anchor, url) => `If you're exploring options, [${anchor}](${url}) is worth a look.`,
+  (anchor, url) => `See also [${anchor}](${url}).`,
+];
+
+/**
+ * Simple seeded random based on string hash — avoids Math.random()
+ * so server and client produce identical output.
+ */
+function hashCode(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash);
+}
+
 /**
  * Inject internal links into markdown content.
  * Avoids headings, respects max links, uses varied anchors.
+ * Spreads links evenly across the article.
  */
 export function injectInternalLinks(content, currentSlug, linkMap) {
   if (!content || !linkMap) return content;
 
-  let linksAdded = 0;
-  let result = content;
   const usedSlugs = new Set();
 
   // Get candidate articles to link to (exclude self)
@@ -96,52 +118,65 @@ export function injectInternalLinks(content, currentSlug, linkMap) {
     ([slug]) => slug !== currentSlug
   );
 
-  // Shuffle candidates for variety
-  const shuffled = candidates.sort(() => Math.random() - 0.5);
+  // Deterministic shuffle based on current slug (no Math.random)
+  const seed = hashCode(currentSlug);
+  const shuffled = candidates
+    .map((c, i) => [c, hashCode(currentSlug + c[0] + i)])
+    .sort((a, b) => a[1] - b[1])
+    .map((c) => c[0]);
 
-  for (const [slug, { url, anchors }] of shuffled) {
-    if (linksAdded >= MAX_LINKS_PER_ARTICLE) break;
-    if (usedSlugs.has(slug)) continue;
+  // Find eligible paragraphs (not headings, lists, tables, code, short lines)
+  const paragraphs = content.split("\n");
+  const eligibleIndices = [];
 
-    // Pick a random anchor variation
-    const anchor = anchors[Math.floor(Math.random() * anchors.length)];
-
-    // Find a paragraph (not a heading) that could mention this topic
-    // We insert the link as a natural reference at the end of a paragraph
-    const paragraphs = result.split("\n");
-    let inserted = false;
-
-    for (let i = 0; i < paragraphs.length; i++) {
-      const line = paragraphs[i];
-
-      // Skip headings, empty lines, lists, code blocks, existing links
-      if (
-        line.startsWith("#") ||
-        line.trim() === "" ||
-        line.startsWith("- ") ||
-        line.startsWith("* ") ||
-        line.startsWith("|") ||
-        line.startsWith("```") ||
-        line.includes(`](${url})`)
-      ) {
-        continue;
-      }
-
-      // Only insert in substantial paragraphs (more than 50 chars)
-      if (line.length > 50 && !inserted) {
-        // Append link reference naturally
-        paragraphs[i] = `${line} Check out [${anchor}](${url}) for more details.`;
-        inserted = true;
-        break;
-      }
+  for (let i = 0; i < paragraphs.length; i++) {
+    const line = paragraphs[i];
+    if (
+      line.startsWith("#") ||
+      line.trim() === "" ||
+      line.startsWith("- ") ||
+      line.startsWith("* ") ||
+      line.startsWith("|") ||
+      line.startsWith("```") ||
+      line.startsWith(">") ||
+      line.length <= 80
+    ) {
+      continue;
     }
-
-    if (inserted) {
-      result = paragraphs.join("\n");
-      linksAdded++;
-      usedSlugs.add(slug);
-    }
+    eligibleIndices.push(i);
   }
 
-  return result;
+  if (eligibleIndices.length === 0) return content;
+
+  // Spread links evenly across eligible paragraphs
+  const linksToAdd = Math.min(MAX_LINKS_PER_ARTICLE, shuffled.length, eligibleIndices.length);
+  const spacing = Math.max(1, Math.floor(eligibleIndices.length / (linksToAdd + 1)));
+
+  let linksAdded = 0;
+
+  for (let linkIdx = 0; linkIdx < linksToAdd; linkIdx++) {
+    const [slug, { url, anchors }] = shuffled[linkIdx];
+    if (usedSlugs.has(slug)) continue;
+
+    // Pick paragraph position — spread evenly
+    const paraIdx = eligibleIndices[Math.min(
+      spacing * (linkIdx + 1),
+      eligibleIndices.length - 1
+    )];
+
+    // Skip if this paragraph already has an injected link
+    if (paragraphs[paraIdx].includes("](")) continue;
+
+    // Pick anchor and template deterministically
+    const anchorIdx = hashCode(currentSlug + slug) % anchors.length;
+    const templateIdx = (seed + linkIdx) % LINK_TEMPLATES.length;
+    const anchor = anchors[anchorIdx];
+    const linkSentence = LINK_TEMPLATES[templateIdx](anchor, url);
+
+    paragraphs[paraIdx] = `${paragraphs[paraIdx]} ${linkSentence}`;
+    usedSlugs.add(slug);
+    linksAdded++;
+  }
+
+  return paragraphs.join("\n");
 }
