@@ -20,7 +20,7 @@ RESEARCH REQUIREMENTS (MANDATORY):
 Read the entire outline first. Infer who the reader is (what they already know, what they need, what they're worried about, what would make them quit reading). Write a complete 3,000-word blog post for that exact reader that aligns with search consensus while providing novel value.
 
 DELIVERY METHOD
-Write in stages. Split the blog into multiple shorter outputs, continuing until the full blog is finished. Keep formatting and tone consistent across every message.
+Write the COMPLETE blog post in a SINGLE response. Do NOT split across multiple messages. Include every section from start to finish in one output.
 
 OUTPUT RULES (NON-NEGOTIABLE)
 
@@ -84,7 +84,7 @@ Seamlessly blend ALL of these into the final post (no obvious stitching):
 - "How We Ranked These" section (brief methodology)
 
 **Requirements:**
-- Write 2500-3500 words
+- MINIMUM 2,500 words, target 3,000-3,500 words. This is critical for SEO — articles under 2,500 words will not rank. Each of the 7 items needs 3-4 substantive paragraphs (not just 2). Add practical details: pricing tiers, location tips, insider tricks, comparisons to alternatives
 - Meta title: under 60 characters
 - Meta description: under 155 characters, include the number of items
 - Excerpt: 1-2 sentence summary
