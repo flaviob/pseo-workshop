@@ -8,11 +8,15 @@ body {
 
 /* Markdown content styles */
 .prose h2 {
-  @apply text-2xl font-display font-bold mt-8 mb-4 text-ink-950;
+  @apply text-2xl font-display font-bold mt-12 mb-5 pt-10 text-ink-950 border-t border-brand-200;
+}
+
+.prose h2:first-child {
+  @apply mt-0 pt-0 border-t-0;
 }
 
 .prose h3 {
-  @apply text-xl font-display font-semibold mt-6 mb-3 text-ink-900;
+  @apply text-lg font-display font-semibold mt-8 mb-3 text-ink-800 pl-4 border-l-[3px] border-accent-400;
 }
 
 .prose p {
@@ -20,15 +24,38 @@ body {
 }
 
 .prose ul, .prose ol {
-  @apply mb-4 pl-6;
+  @apply mb-6 pl-0 space-y-2;
 }
 
 .prose ul {
-  @apply list-disc;
+  @apply list-none;
 }
 
 .prose ol {
-  @apply list-decimal;
+  @apply list-none;
+  counter-reset: item;
+}
+
+.prose ul > li {
+  @apply relative pl-7 text-ink-700;
+}
+
+.prose ul > li::before {
+  content: "";
+  @apply absolute left-0 top-2 w-4 h-4 rounded-full bg-accent-100 border-2 border-accent-400;
+}
+
+.prose ol > li {
+  @apply relative pl-10 text-ink-700;
+  counter-increment: item;
+}
+
+.prose ol > li::before {
+  content: counter(item);
+  @apply absolute left-0 top-0 w-7 h-7 rounded-full bg-accent-500 text-white text-xs font-bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .prose li {
@@ -60,5 +87,5 @@ body {
 }
 
 .prose hr {
-  @apply my-8 border-brand-200;
+  @apply my-10 border-brand-200;
 }

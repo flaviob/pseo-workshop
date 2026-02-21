@@ -31,6 +31,10 @@ export default async function ComparisonPage({ params }) {
   const itemA = titleMatch ? titleMatch[1].trim() : null;
   const itemB = titleMatch ? titleMatch[2].trim() : null;
 
+  const updatedDate = article.updatedAt
+    ? new Date(article.updatedAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "2-digit" })
+    : null;
+
   return (
     <article className="max-w-3xl mx-auto">
       {schema && (
@@ -45,6 +49,11 @@ export default async function ComparisonPage({ params }) {
           <a href="/" className="text-sm text-ink-400 hover:text-accent-600 transition-colors">Home</a>
           <span className="text-ink-300">/</span>
           <span className="text-sm font-medium text-accent-600">Comparison</span>
+          {updatedDate && (
+            <span className="ml-auto text-xs font-medium text-accent-700 bg-accent-100 px-3 py-1 rounded-full">
+              Updated {updatedDate}
+            </span>
+          )}
         </div>
         {itemA && itemB && (
           <div className="flex items-center gap-4 mb-5">
@@ -61,18 +70,18 @@ export default async function ComparisonPage({ params }) {
           {article.title}
         </h1>
         {article.excerpt && (
-          <p className="text-lg text-ink-500 leading-relaxed">{article.excerpt}</p>
+          <p className="text-lg text-ink-500 leading-relaxed border-l-4 border-accent-300 pl-4">
+            {article.excerpt}
+          </p>
         )}
       </header>
 
-      <div className="bg-white rounded-2xl border border-brand-200 p-6 md:p-10">
-        <ArticleContent
-          content={article.content}
-          currentSlug={article.slug}
-          allArticles={allArticles}
-          title={article.title}
-        />
-      </div>
+      <ArticleContent
+        content={article.content}
+        currentSlug={article.slug}
+        allArticles={allArticles}
+        title={article.title}
+      />
 
       <RelatedPosts
         currentSlug={article.slug}
