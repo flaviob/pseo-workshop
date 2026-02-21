@@ -4,6 +4,40 @@ Build a full programmatic SEO site with **Claude Code + Strapi + Next.js**, depl
 
 Generate hundreds of SEO-optimized pages in minutes. Works for any directory-style niche.
 
+## Quick Start (5 steps)
+
+```bash
+# 1. Clone and install
+git clone https://github.com/flaviob/pseo-workshop.git
+cd pseo-workshop
+npm install
+cd backend && npm install && cd ..
+cd frontend && npm install && cd ..
+
+# 2. Set up env files
+cp .env.example .env
+cp frontend/.env.example frontend/.env.local
+# Then edit .env and add your ANTHROPIC_API_KEY
+
+# 3. Start Strapi locally (uses SQLite — no database setup needed)
+cd backend && npm run develop
+# → Opens admin at http://localhost:1337/admin
+# → Create your admin account, then create the "article" content type (see Step 2 below)
+# → Create an API token: Settings → API Tokens → Full access
+# → Paste the token into .env and frontend/.env.local as STRAPI_TOKEN
+
+# 4. Generate content and import
+npm run generate        # Creates articles in output/
+npm run import          # Pushes them to Strapi as drafts
+
+# 5. Start the frontend
+npm run dev             # Opens site at http://localhost:3000
+```
+
+> **Tip:** See `config.example.js` for a second niche (coffee shops) showing how to customize the site for any topic.
+
+---
+
 ## Before the Workshop
 
 1. **Install Node.js 18+** — [nodejs.org](https://nodejs.org)
@@ -20,11 +54,13 @@ Generate hundreds of SEO-optimized pages in minutes. Works for any directory-sty
 5. **Install dependencies:**
    ```bash
    npm install
+   cd backend && npm install && cd ..
    cd frontend && npm install && cd ..
    ```
-6. **Copy env file:**
+6. **Copy env files:**
    ```bash
    cp .env.example .env
+   cp frontend/.env.example frontend/.env.local
    ```
 
 ---
@@ -48,10 +84,23 @@ module.exports = {
 
 Ideas: coworking spaces, coffee shops, gyms, SaaS tools, restaurants, hiking trails, digital nomad cities...
 
-### Step 2: Deploy Strapi on Railway (15 min)
+> **See `config.example.js`** for a fully commented coffee shops example.
 
+### Step 2: Set Up Strapi (15 min)
+
+**Option A — Local (recommended for the workshop):**
+Run Strapi locally with SQLite (no database setup needed):
+```bash
+cd backend && npm run develop
+```
+This opens the admin at `http://localhost:1337/admin`. Create your admin account on first run.
+
+**Option B — Railway (for production):**
 1. Go to [Railway](https://railway.app) and create a new project
 2. Deploy Strapi using the template or Docker image
+
+**Then create the content type:**
+
 3. Create the `article` content type in Strapi admin with these fields:
    - `title` (text)
    - `slug` (uid, based on title)
@@ -145,13 +194,17 @@ Add new content anytime:
 ```
 pseo-workshop/
 ├── config.js              # Your niche configuration (edit this!)
+├── config.example.js      # Example config (coffee shops) for reference
 ├── CLAUDE.md              # Instructions for Claude Code
+├── .env.example           # Environment variables template
 ├── prompts/               # Content generation templates
 ├── scripts/               # Generation, import, and management scripts
 ├── frontend/              # Next.js site
 │   ├── app/               # Pages (App Router)
 │   ├── lib/               # Strapi client, SEO helpers, internal linking
-│   └── components/        # Reusable components
+│   ├── components/        # Reusable components
+│   └── .env.example       # Frontend env template
+├── backend/               # Strapi v5 CMS (SQLite locally, Postgres on Railway)
 ├── output/                # Generated content (JSON files)
 └── .env                   # Your API keys (not committed)
 ```
